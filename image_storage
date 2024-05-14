@@ -30,6 +30,10 @@ const onFileChange = (event) => {
 
 
 // 3. 사진 출력(미리보기 기능) : 2-2 코드에 추가한 것, 파일 정보를 인자로 받아서 파일 위치를 URL로 반환해
+// 추가할 내용 : URL을 관리하기 위한 상태 추가
+const [attachemnt, setAttachment] = useState("");
+
+//
 const onFileChange = (event) => {
   const {
      target: { files },
@@ -37,6 +41,54 @@ const onFileChange = (event) => {
   const theFile = files[0];
   const reader = new FileReader();
   reader.onloadene = (finishedEvent) => {
-    console.log(finishedEvent);
+    const {
+      currentTarget: { result },
+   } = finishedEvent;
+   setAttachment(result);
+ };
+ reader.readAsDataURL(thefile);
 };
-reader.readAsDataURL(thefile);
+
+
+//[사진저장]
+// 1. 파이어베이스 스토리지 임포트하기
+import firbase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/storage";  // 추가할 부분!
+
+...
+
+export const firebaseInstance = firebase;
+export const authService = firebase.auth();
+export const dbService = firebase.firestore();
+export const storageService = firebase.storage();  // 추가할 부분!
+
+
+// 2. 고유 식별자를 만들어주는 UUID 라이브러리 설치 필요
+npm install uuid
+
+// 3. UUID 임포트하기 + child함수에 사용자 아이디를 폴더 이름으로, 파일 이름을 uuid4로 처
+import { dbService, storageService } from "fbase";
+import { useEffect, useState } from "react";
+import Nweet from "components/Nweet";
+import { v4 as uuid4 } from "uuid";
+
+// 같이 추가할 부분
+const onSubmit = async (event) => {
+  event.preventDefault();
+  /* await dbService.collection("nweets").add({
+     text : nweet,
+     createdAt : Date.now(),
+     creatorID : userObj.uid,
+});
+setNweet(""); */
+storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
+};
+
+
+// 4. 스토리지에 사진 저장하기
+
+
+
+
