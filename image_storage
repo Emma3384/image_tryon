@@ -87,8 +87,111 @@ storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
 };
 
 
-// 4. 스토리지에 사진 저장하기
+// 4. 스토리지에 사진 저장하기 : 3의 같이 추가할 부분 수정한 것(Nweet 버튼 누르면 저장)
+const onSubmit = async (event) => {
+  event.preventDefault();
+  /* await dbService.collection("nweets").add({
+     text : nweet,
+     createdAt : Date.now(),
+     creatorID : userObj.uid,
+});
+setNweet("");*/
+const attachmentRef = storageService
+  .ref()
+  .child(`${userObj.uid}/${uuidv4()}`);
+const response = await attachmentRef.putString(attachment, "data_url");
+console.log(response);
+};
 
 
+// 5. 스토리지에서 사진 불러오기 : 4번 수정한 것! (p.165)
+const onSubmit = async (event) => {
+  event.preventDefault();
+  /* await dbService.collection("nweets").add({
+     text : nweet,
+     createdAt : Date.now(),
+     creatorID : userObj.uid,
+});
+setNweet("");*/
+const attachmentRef = storageService
+  .ref()
+  .child(`${userObj.uid}/${uuidv4()}`);
+const response = await attachmentRef.putString(attachment, "data_url");
+console.log(await response.ref.getDownloadURL());
+};
+
+ 
+// 6. 사진을 포함한 결과 화면에 출력하기 :
+const onSubmit = async (event) => {
+  event.preventDefault();
+  /* await dbService.collection("nweets").add({
+     text : nweet,
+     createdAt : Date.now(),
+     creatorID : userObj.uid,
+});
+setNweet("");*/
+const attachmentRef = storageService
+  .ref()
+  .child(`${userObj.uid}/${uuidv4()}`);
+const response = await attachmentRef.putString(attachment, "data_url");
+const attachmentUrl = await response.ref.getDownloadURL();
+
+
+// 7. 업로드 로직 + attachmentURL을 파이어스토어 저장 로직으로 사용
+const onSubmit = async (event) => {
+  event.preventDefault();
+  const attachment = storageService
+    .ref()
+    .child(`${userObj.uid}/${uuidv4()}`);
+const response = await attachmentRef.putString(attachment, "data_url");
+const attachmentUrl = await response.ref.getDownloadURL();
+await dbService.collection("nweets").add({
+     text : nweet,
+     createdAt : Date.now(),
+     creatorID : userObj.uid,
+     attachmentUrl,
+});
+  setNweet("");
+  setAttachment("");
+};
+
+
+// 8. 누이터 화면에 사진 보여주기 (src.component 파일 코드)
+return (
+  <div>
+    <h4>{nweetObj.text}</h4>
+    {nweetObj.attachmentUrl && (
+      <img src={nweetObj.attachmentUrl} width="50px" height="50px" />
+)}
+{isOwner && (
+    <>
+      <button onClick={onDeleteClick}>Delete Nweet</button>
+      <button>Edit Nweet</button>
+    </>
+  )}
+  </div>
+);
+
+
+// 9. 코드 다듬기 : 7번 수정한 것!
+const onSubmit = async (event) => {
+  event.preventDefault();
+  let attachmentUrl = "";
+  if (attachment !== "") {
+    const attachment = storageService
+      .ref()
+      .child(`${userObj.uid}/${uuidv4()}`);
+    const response = await attachmentRef.putString(attachment, "data_url");
+await dbService.collection("nweets").add({
+  text : nweet,
+  createdAt : Date.now(),
+  creatorID : userObj.uid,
+  attachmentUrl,
+});
+  setNweet("");
+  setAttachment("");
+};
+
+  
 
 
